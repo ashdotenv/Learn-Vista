@@ -1,0 +1,9 @@
+export const {
+  PORT,
+  ORIGIN,
+  CLOUDINARY_API_SECRET,
+  CLOUDINARY_CLOUD_NAME,
+  CLOUDINARY_API_KEY,
+  DB_URI,
+  REDIS_URI,
+} = process.env;
