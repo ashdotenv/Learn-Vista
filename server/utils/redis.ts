@@ -1,24 +1,22 @@
 import Redis from "ioredis";
 import { REDIS_URI } from "../config/config";
 
-let redis: Redis | null = null;
+if (!REDIS_URI) {
+  throw new Error("REDIS_URI is not defined in the environment");
+}
 
-export const connectToRedis = (): Redis => {
-  if (!REDIS_URI) {
-    throw new Error("REDIS_URI is not defined in the environment");
-  }
+export let redisClient: Redis | null = null;
 
-  if (!redis) {
-    redis = new Redis(REDIS_URI);
+export const connectToRedis = (): void => {
+  if (!redisClient) {
+    redisClient = new Redis(REDIS_URI as string);
 
-    redis.on("connect", () => {
+    redisClient.on("connect", () => {
       console.log("Redis connected");
     });
 
-    redis.on("error", (err) => {
+    redisClient.on("error", (err) => {
       console.error("❌ Redis connection error:", err);
     });
   }
-
-  return redis;
 };

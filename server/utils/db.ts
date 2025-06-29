@@ -6,7 +6,9 @@ export const connectToDB = async (): Promise<void> => {
       throw new Error("Database URI is not defined");
     }
 
-    const connection = await mongoose.connect(DB_URI);
+    const connection = await mongoose.connect(DB_URI, {
+      dbName: "Learn_Vista",
+    });
     console.log(`DB Connected to ${connection.connection.host}`);
   } catch (error: any) {
     console.error("DB Connection failed:", error.message);

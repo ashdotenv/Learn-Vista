@@ -1,0 +1,1 @@
+{"root":["./app.ts","./server.ts","./config/config.ts","./controllers/auth.controller.ts","./middleware/catchasyncerror.ts","./middleware/error.ts","./models/user.model.ts","./routes/auth.routes.ts","./routes/index.routes.ts","./utils/errorhandler.ts","./utils/db.ts","./utils/jwt.ts","./utils/redis.ts","./utils/sendemail.ts"],"version":"5.8.3"}
