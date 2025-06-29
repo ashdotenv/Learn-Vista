@@ -7,7 +7,7 @@ import { ORIGIN } from "./config/config";
 import { errorMiddleware } from "./middleware/error";
 import indexRoute from "./routes/index.routes";
 export const app = express();
-app.use(express.json())
+app.use(express.json());
 app.use(cookieParser());
 app.use(
   cors({

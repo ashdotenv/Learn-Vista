@@ -8,7 +8,6 @@ import ejs from "ejs";
 import path from "path";
 import { sendEmail } from "../utils/sendEmail";
 import { sendToken } from "../utils/jwt";
-import { log } from "console";
 
 interface IRegistrationBody {
   name: string;
@@ -111,7 +110,7 @@ interface ILoginRequest {
   email: string;
   password: string;
 }
-export const login = catchAsyncError(
+export const loginUser = catchAsyncError(
   async (req: Request, res: Response, next: NextFunction) => {
     try {
       const { email, password } = req.body as ILoginRequest;
@@ -130,20 +129,6 @@ export const login = catchAsyncError(
       if (!isPasswordMatch) {
         return next(new ErrorHandler("Incorrect password", 401));
       }
-      const accessToken = user.SignAccessT1oken();
-      const refreshToken = user.SignRefreshToken();
-      res.status(200).json({
-        success: true,
-        accessToken,
-        refreshToken,
-        user: {
-          id: user._id,
-          name: user.name,
-          email: user.email,
-          role: user.role,
-          avatar: user.avatar,
-        },
-      });
       sendToken(user, 200, res);
     } catch (error: any) {
       console.log(error);
@@ -151,6 +136,17 @@ export const login = catchAsyncError(
     }
   }
 );
-export const logout = catchAsyncError(
-  async (req: Request, res: Response, next: NextFunction) => {}
+export const logoutUser = catchAsyncError(
+  async (req: Request, res: Response, next: NextFunction) => {
+    try {
+      res.cookie("access_token", "", { maxAge: 1 });
+      res.cookie("refresh_token", "", { maxAge: 1 });
+      res.status(200).json({
+        success: true,
+        message: "Logged out successfully",
+      });
+    } catch (error: any) {
+      return next(new ErrorHandler(error.message, 400));
+    }
+  }
 );
