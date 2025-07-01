@@ -29,7 +29,7 @@ export const isAuthenticated = catchAsyncError(
       }
       req.user = JSON.parse(user);
 
-      next(); 
+      next();
     } catch (error: any) {
       if (
         error.name === "JsonWebTokenError" ||
