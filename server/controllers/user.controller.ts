@@ -1,13 +1,23 @@
 import { NextFunction, Request, Response } from "express";
 import { catchAsyncError } from "../middleware/catchAsyncError";
-import { IUser, User } from "../models/user.model";
+import { User } from "../models/user.model";
 import { ErrorHandler } from "../utils/ErrorHandler";
-import jwt, { Secret } from "jsonwebtoken";
-import { ACTIVATION_SECRET } from "../config/config";
+import jwt, { JwtPayload, Secret } from "jsonwebtoken";
+import {
+  ACCESS_TOKEN_SECRET,
+  ACTIVATION_SECRET,
+  REFRESH_TOKEN_SECRET,
+} from "../config/config";
 import ejs from "ejs";
 import path from "path";
 import { sendEmail } from "../utils/sendEmail";
-import { sendToken } from "../utils/jwt";
+import {
+  accessTokenOptions,
+  refreshTokenOptions,
+  sendToken,
+} from "../utils/jwt";
+import { redisClient } from "../utils/redis";
+import { getUserById } from "../services/user.service";
 
 interface IRegistrationBody {
   name: string;
@@ -35,7 +45,6 @@ export const registerUser = catchAsyncError(
 
     const data = { user: { name }, activationCode };
 
-    // Render the activation email template to HTML string
     const html = await ejs.renderFile(
       path.join(__dirname, "../mails/activation-mails.ejs"),
       data
@@ -65,7 +74,7 @@ function createActivationToken(user: IRegistrationBody): IActivationToken {
   const token = jwt.sign(
     { user, activationCode },
     ACTIVATION_SECRET as Secret,
-    { expiresIn: "15d" }
+    { expiresIn: "10m" }
   );
   return { token, activationCode };
 }
@@ -141,12 +150,80 @@ export const logoutUser = catchAsyncError(
     try {
       res.cookie("access_token", "", { maxAge: 1 });
       res.cookie("refresh_token", "", { maxAge: 1 });
+      const userId = req.user?.id;
+      redisClient?.del(userId);
       res.status(200).json({
         success: true,
         message: "Logged out successfully",
       });
     } catch (error: any) {
       return next(new ErrorHandler(error.message, 400));
+    }
+  }
+);
+export const updateAccessToken = catchAsyncError(
+  async (req: Request, res: Response, next: NextFunction) => {
+    try {
+      const refresh_token = req.cookies.refresh_token as string;
+      const decoded = jwt.verify(
+        refresh_token,
+        REFRESH_TOKEN_SECRET as string
+      ) as JwtPayload;
+      if (!decoded) {
+        return next(new ErrorHandler("Couldn't Refresh Token", 401));
+      }
+      const session = await redisClient?.get(decoded.id as string);
+      if (!session) {
+        return next(new ErrorHandler("Couldn't Refresh Token", 401));
+      }
+      const user = JSON.parse(session);
+      const access_token = jwt.sign(
+        { id: user._id },
+        ACCESS_TOKEN_SECRET as string,
+        {
+          expiresIn: "5m",
+        }
+      );
+      res.cookie("access_token", access_token, accessTokenOptions);
+      res.cookie("refresh_token", refresh_token, refreshTokenOptions);
+      res.status(200).json({ status: "success", access_token });
+    } catch (error: any) {
+      return next(new ErrorHandler(error.message, 500));
+    }
+  }
+);
+export const getUserInfo = catchAsyncError(
+  async (req: Request, res: Response, next: NextFunction) => {
+    try {
+      const userId = req.user?.id as string;
+      getUserById(userId, res);
+    } catch (error: any) {
+      return next(new ErrorHandler(error.message, 500));
+    }
+  }
+);
+interface ISocailAuthBody {
+  name: string;
+  email: string;
+  avatar: string;
+}
+export const socialAuth = catchAsyncError(
+  async (req: Request, res: Response, next: NextFunction) => {
+    try {
+      const { name, email, avatar } = req.body as ISocailAuthBody;
+      if (!name || !email) {
+        return next(new ErrorHandler("Please Enter all fields correctly", 400));
+      }
+      const user = await User.findOne({ email });
+
+      if (!user) {
+        const newUser = await User.create({ email, avatar, name });
+        sendToken(newUser, 200, res);
+      } else {
+        sendToken(user, 200, res);
+      }
+    } catch (error: any) {
+      return next(new ErrorHandler(error.message, 500));
     }
   }
 );

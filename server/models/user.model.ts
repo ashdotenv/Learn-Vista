@@ -1,7 +1,7 @@
 import mongoose, { Document, Model, Schema } from "mongoose";
 import bcrypt from "bcryptjs";
 import jwt from "jsonwebtoken";
-import { ACCESS_TOKEN, REFRESH_TOKEN } from "../config/config";
+import { ACCESS_TOKEN_SECRET, REFRESH_TOKEN_SECRET } from "../config/config";
 const emailRegexPattern: RegExp = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
 export interface IUser extends Document {
@@ -16,8 +16,8 @@ export interface IUser extends Document {
   isVerified: boolean;
   courses: Array<{ courseId: string }>;
   comparePassword: (password: string) => Promise<boolean>;
-  SignAccessT1oken: () => string;
-  SignRefreshToken: () => string;
+  SignAccessT1oken: (secret: string) => string;
+  SignRefreshToken: (secret: string) => string;
 }
 
 const userSchema: Schema<IUser> = new mongoose.Schema(
@@ -39,7 +39,6 @@ const userSchema: Schema<IUser> = new mongoose.Schema(
     },
     password: {
       type: String,
-      required: [true, "Please enter your password"],
       minLength: [6, "Password must be at least 6 characters"],
       select: false,
     },
@@ -63,11 +62,11 @@ const userSchema: Schema<IUser> = new mongoose.Schema(
   },
   { timestamps: true }
 );
-userSchema.methods.SignAccessT1oken = function () {
-  return jwt.sign({ id: this._id }, ACCESS_TOKEN as string);
+userSchema.methods.SignAccessT1oken = function (secret: string) {
+  return jwt.sign({ id: this._id }, secret);
 };
-userSchema.methods.SignRefreshToken = function () {
-  return jwt.sign({ id: this._id }, REFRESH_TOKEN as string);
+userSchema.methods.SignRefreshToken = function (secret: string) {
+  return jwt.sign({ id: this._id }, secret);
 };
 userSchema.pre<IUser>("save", async function (next) {
   if (!this.isModified("password")) {
