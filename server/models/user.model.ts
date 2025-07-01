@@ -2,6 +2,7 @@ import mongoose, { Document, Model, Schema } from "mongoose";
 import bcrypt from "bcryptjs";
 import jwt from "jsonwebtoken";
 import { ACCESS_TOKEN_SECRET, REFRESH_TOKEN_SECRET } from "../config/config";
+import { log } from "node:console";
 const emailRegexPattern: RegExp = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
 export interface IUser extends Document {
@@ -39,7 +40,7 @@ const userSchema: Schema<IUser> = new mongoose.Schema(
     },
     password: {
       type: String,
-      minLength: [6, "Password must be at least 6 characters"],
+      minLength: [6, "Password must be at least 6 cha racters"],
       select: false,
     },
     avatar: {
