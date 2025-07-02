@@ -32,12 +32,10 @@ interface IActivationToken {
 export const registerUser = catchAsyncError(
   async (req: Request, res: Response, next: NextFunction) => {
     const { name, email, password } = req.body as IRegistrationBody;
-
     const emailExist = await User.findOne({ email });
     if (emailExist) {
       return next(new ErrorHandler("Email Already Exists", 400));
     }
-
     const userPayload = { name, email, password };
     const { token, activationCode } = createActivationToken(userPayload);
 

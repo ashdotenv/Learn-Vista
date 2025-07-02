@@ -43,7 +43,7 @@ export const sendToken = (user: IUser, statusCode: number, res: Response) => {
   const accessToken = user.SignAccessT1oken(ACCESS_TOKEN_SECRET as string);
   const refreshToken = user.SignRefreshToken(REFRESH_TOKEN_SECRET as string);
 
-  redisClient?.set(user._id as string, JSON.stringify({ id: user._id }));
+  redisClient?.set(user._id as string, JSON.stringify(user));
 
   res.cookie("access_token", accessToken, accessTokenOptions);
   res.cookie("refresh_token", refreshToken, refreshTokenOptions);

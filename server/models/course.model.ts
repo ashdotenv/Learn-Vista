@@ -2,8 +2,8 @@ import mongoose, { Document, Schema } from "mongoose";
 
 interface IComment extends Document {
   user: object;
-  comment: string;
-  commentReplies: IComment[];
+  question: string;
+  questionReplies: IComment[];
 }
 
 interface IReview extends Document {
@@ -22,7 +22,7 @@ interface ICourseData extends Document {
   title: string;
   description: string;
   videoUrl: string;
-  videoThumbnail: object;
+  // videoThumbnail: object;
   videoSection: string;
   videoLength: number;
   videoPlayer: string;
@@ -53,20 +53,9 @@ interface ICourse extends Document {
 
 const commentSchema = new Schema<IComment>(
   {
-    user: {
-      type: Object,
-      required: true,
-    },
-    comment: {
-      type: String,
-      required: true,
-    },
-    commentReplies: [
-      {
-        type: mongoose.Schema.Types.Mixed,
-        default: [],
-      },
-    ],
+    user: Object,
+    question: String,
+    questionReplies: [Object]
   },
   { timestamps: true }
 );
@@ -116,10 +105,10 @@ const courseDataSchema = new Schema<ICourseData>(
       type: String,
       required: true,
     },
-    videoThumbnail: {
-      type: Object,
-      required: true,
-    },
+    // videoThumbnail: {
+    //   type: Object,
+    //   required: true,
+    // },
     videoSection: {
       type: String,
       required: true,
@@ -162,11 +151,11 @@ const courseSchema = new Schema<ICourse>(
     thumbnail: {
       public_id: {
         type: String,
-        required: true,
+        // required: true,
       },
       url: {
         type: String,
-        required: true,
+        // required: true,
       },
     },
     tags: {

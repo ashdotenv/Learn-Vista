@@ -1,17 +1,17 @@
 import express from "express";
 import {
   getUserInfo,
-  socialAuth,
   updatePassword,
   updateProfilePicture,
   updateUserInfo,
 } from "../controllers/user.controller";
-import { isAuthenticated } from "../middleware/auth";
+import { addQuestionInCourse, getCourseContent } from "../controllers/course.controller";
 const router = express.Router();
 
-router.get("/me", isAuthenticated, getUserInfo);
-router.post("/social-auth", socialAuth);
-router.put("/update-user", isAuthenticated, updateUserInfo);
-router.put("/update-password", isAuthenticated, updatePassword);
-router.put("/update-avatar", isAuthenticated, updateProfilePicture);
+router.get("/me", getUserInfo);
+router.put("/update-user", updateUserInfo);
+router.put("/update-password", updatePassword);
+router.put("/update-avatar", updateProfilePicture);
+router.get("/course-content/:id", getCourseContent);
+router.put("/add-question", addQuestionInCourse);
 export default router;

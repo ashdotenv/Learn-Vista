@@ -1,7 +1,13 @@
 import express from "express";
 const router = express.Router();
-import userRouter from "./user.routes";
+import userRoutes from "./user.routes";
 import authRoutes from "./auth.routes";
+import adminRoutes from "./admin.routes";
+import { authorizeRoles, isAuthenticated } from "../middleware/auth";
+import { getAllCourses, getCourseById } from "../controllers/course.controller";
+router.get("/courses", getAllCourses);
+router.get("/course/:id", getCourseById);
 router.use("/auth", authRoutes);
-router.use("/user", userRouter);
+router.use("/user", isAuthenticated, authorizeRoles("user"), userRoutes);
+router.use("/admin", isAuthenticated, authorizeRoles("admin"), adminRoutes);
 export default router;
