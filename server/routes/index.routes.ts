@@ -4,7 +4,7 @@ import userRoutes from "./user.routes";
 import authRoutes from "./auth.routes";
 import adminRoutes from "./admin.routes";
 import { authorizeRoles, isAuthenticated } from "../middleware/auth";
-import { getAllCourses, getCourseById } from "../controllers/course.controller";
+import { addAnswer, getAllCourses, getCourseById } from "../controllers/course.controller";
 router.get("/courses", getAllCourses);
 router.get("/course/:id", getCourseById);
 router.use("/auth", authRoutes);

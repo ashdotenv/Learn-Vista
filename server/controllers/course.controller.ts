@@ -7,7 +7,9 @@ import { createCourse } from "../services/course.service";
 import { Course } from "../models/course.model";
 import { redisClient } from "../utils/redis";
 import mongoose from "mongoose";
-
+import ejs from "ejs"
+import path from "path";
+import { sendEmail } from "../utils/sendEmail";
 export const uploadCourse = catchAsyncError(
   async (req: Request, res: Response, next: NextFunction) => {
     try {
@@ -174,6 +176,105 @@ export const addQuestionInCourse = catchAsyncError(async (req: Request, res: Res
       success: true,
       course
     })
+  } catch (error: any) {
+    return next(new ErrorHandler(error.message, 500))
+  }
+})
+interface IAnswerData {
+  answer: string
+  courseId: string
+  contentId: string
+  questionId: string
+}
+
+export const addAnswer = catchAsyncError(async (req: Request, res: Response, next: NextFunction) => {
+  try {
+    const { answer, courseId, contentId, questionId } = req.body as IAnswerData
+    const course = await Course.findById(courseId)
+    if (!mongoose.Types.ObjectId.isValid(contentId)) {
+      return next(new ErrorHandler("Invalid Content Id", 400))
+    }
+    const courseContent = course?.courseData.find((item: any) => item._id.equals(contentId))
+    if (!courseContent) {
+      return next(new ErrorHandler("Invalid Content Id", 400))
+    }
+    const question = courseContent.questions.find((item: any) => item._id.equals(questionId))
+    if (!question) {
+      return next(new ErrorHandler("Invalid Question Id", 400))
+    }
+    const newAnswer: any = {
+      user: req.user,
+      answer
+    }
+    question.questionReplies.push(newAnswer)
+    await course?.save()
+    if (req.user?._id === question.user._id) {
+      // TODO: Send Notification
+    } else {
+      const data = {
+        name: question.user.name,
+        title: courseContent.title
+      }
+      const html = await ejs.renderFile(path.join(__dirname, "../mails/question-reply.ejs"), data)
+      try {
+        await sendEmail({
+          email: question.user.email,
+          subject: "Question Reply",
+          template: "question-reply.ejs",
+          data
+        })
+      } catch (error: any) {
+        return next(new ErrorHandler(error.message, 500))
+      }
+    }
+    res.status(200).json({
+      success: true, course
+    })
+
+  } catch (error: any) {
+    return next(new ErrorHandler(error.message, 500))
+  }
+})
+interface IReviewData {
+  review: string,
+  courseId: string,
+  rating: string,
+  userId: string,
+}
+export const addReview = catchAsyncError(async (req: Request, res: Response, next: NextFunction) => {
+  try {
+    const courseList = req.user?.courses
+    const courseId = req.params.id
+    // check if user is enrolled in the course
+    const courseExist = courseList?.some((course: any) => course._id.toString() === courseId.toString)
+    if (!courseExist) {
+      return next(new ErrorHandler("You are not enrolled in this course", 401))
+    }
+    const { review, rating } = req.body as IReviewData
+    const course = await Course.findById(courseId)
+    const reviewData: any = {
+      user: req.user,
+      comment: review,
+      rating
+    }
+    course?.reviews.push(reviewData)
+    let avg = 0
+    course?.reviews.forEach((rev: any) => avg += rev.rating)
+    if (course) {
+      course.ratings = avg / course.reviews.length
+    }
+    await course?.save()
+    const notification: any = {
+      title: "New Review Added"
+      , message: `${req.user?.name} has given a review in ${course?.name}`
+    }
+    // TODO: Send Notification
+    res.status(200).json({
+      success: true,
+      course
+    })
+
+
   } catch (error: any) {
     return next(new ErrorHandler(error.message, 500))
   }
