@@ -10,6 +10,8 @@ import mongoose, { Mongoose } from "mongoose";
 import ejs from "ejs"
 import path from "path";
 import { sendEmail } from "../utils/sendEmail";
+import { Notification } from "../models/notification,model";
+import { getNotifications } from "./notifications.controller";
 export const uploadCourse = catchAsyncError(
   async (req: Request, res: Response, next: NextFunction) => {
     try {
@@ -170,6 +172,11 @@ export const addQuestionInCourse = catchAsyncError(async (req: Request, res: Res
       questionReplies: []
     }
     courseContent.questions.push(newQuestion)
+    await Notification.create({
+      userId: req.user?._id,
+      title: "New Question Received",
+      message: `${req.user?.name} just asked a Question in ${courseContent?.title}`
+    })
 
     await course?.save()
     res.status(200).json({
@@ -209,7 +216,11 @@ export const addAnswer = catchAsyncError(async (req: Request, res: Response, nex
     question.questionReplies.push(newAnswer)
     await course?.save()
     if (req.user?._id === question.user._id) {
-      // TODO: Send Notification
+      await Notification.create({
+        userId: req.user?._id,
+        title: "New Question Reply Revieved",
+        message: `You have a new question reply in ${courseContent.title}`
+      })
     } else {
       const data = {
         name: question.user.name,

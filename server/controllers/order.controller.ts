@@ -4,7 +4,7 @@ import { ErrorHandler } from "../utils/ErrorHandler";
 import { IOorder } from "../models/order.model";
 import { User } from "../models/user.model";
 import { Course } from "../models/course.model";
-import { newOrder } from "../services/order.service";
+import { getAllOrdersService, newOrder } from "../services/order.service";
 import ejs from "ejs"
 import path from "path";
 import { sendEmail } from "../utils/sendEmail";
@@ -54,9 +54,19 @@ export const createOrder = catchAsyncError(async (req: Request, res: Response, n
         await Notification.create({
             userId: user?._id,
             title: "New Order",
-            message: `You habe a new Order From ${course.name}`
+            message: `You have a new Order From ${course.name}`
         })
+        if (course.purchased) {
+            course.purchased += 1
+        }
         newOrder(data, res, next)
+    } catch (error: any) {
+        return next(new ErrorHandler(error.message, 500))
+    }
+})
+export const getAllorders = catchAsyncError(async (req: Request, res: Response, next: NextFunction) => {
+    try {
+        getAllOrdersService(res)
     } catch (error: any) {
         return next(new ErrorHandler(error.message, 500))
     }

@@ -8,3 +8,10 @@ export const newOrder = async (data: any, res: Response, next: NextFunction) => 
         order
     })
 }
+export const getAllOrdersService = async (res: Response) => {
+    const orders = await Order.find().sort({ createdAt: -1 })
+    res.status(200).json({
+        success: true,
+        orders
+    })
+}

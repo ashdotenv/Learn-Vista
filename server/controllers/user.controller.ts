@@ -4,7 +4,7 @@ import { User } from "../models/user.model";
 import { ErrorHandler } from "../utils/ErrorHandler";
 import { sendToken } from "../utils/jwt";
 import { redisClient } from "../utils/redis";
-import { getUserById } from "../services/user.service";
+import { getAllUsersService, getUserById } from "../services/user.service";
 import { log } from "node:console";
 import { cloudinary } from "../config/cloundinary.config";
 import { json } from "node:stream/consumers";
@@ -174,3 +174,17 @@ export const updateProfilePicture = catchAsyncError(
     }
   }
 );
+export const getAllUsers = catchAsyncError(async (req: Request, res: Response, next: NextFunction) => {
+  try {
+    const cacheExist = await redisClient?.get("allUsers")
+    if (!cacheExist) {
+      return getAllUsersService(res)
+    }
+    res.status(200).json({
+      success: true,
+      users: JSON.parse(cacheExist)
+    })
+  } catch (error: any) {
+    return next(new ErrorHandler(error.message, 500))
+  }
+})

@@ -9,3 +9,8 @@ export const getUserById = async (id: string, res: Response) => {
     res.status(200).json({ user, success: true });
   }
 };
+export const getAllUsersService = async (res: Response) => {
+  const users = await User.find().sort({ createdAt: -1 })
+  redisClient?.set("allUsers", JSON.stringify(users))
+  res.status(200).json({ users, success: true });
+};
