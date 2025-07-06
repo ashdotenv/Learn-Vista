@@ -283,10 +283,10 @@ interface ICommentInReviewData {
   courseId: string
   reviewId: string
 }
-
 export const addReplyToReview = catchAsyncError(async (req: Request, res: Response, next: NextFunction) => {
   try {
     const { comment, courseId, reviewId } = req.body as ICommentInReviewData
+
     const course = await Course.findById(courseId)
     if (!course) return next(new ErrorHandler("Course not found", 404))
 
@@ -295,15 +295,12 @@ export const addReplyToReview = catchAsyncError(async (req: Request, res: Respon
 
     const replyData = {
       user: req.user,
-      comment
-    }
-    if (!Array.isArray(review.commentReplies)) {
-      review.commentReplies = [{}]
+      question: comment,
+      questionReplies: []
     }
 
     review.commentReplies.push(replyData)
     review.markModified("commentReplies")
-
     await course.save()
 
     res.status(200).json({
