@@ -4,7 +4,7 @@ import { User } from "../models/user.model";
 import { ErrorHandler } from "../utils/ErrorHandler";
 import { sendToken } from "../utils/jwt";
 import { redisClient } from "../utils/redis";
-import { getAllUsersService, getUserById } from "../services/user.service";
+import { getAllUsersService, getUserById, updateUserRoleService } from "../services/user.service";
 import { log } from "node:console";
 import { cloudinary } from "../config/cloundinary.config";
 import { json } from "node:stream/consumers";
@@ -183,6 +183,38 @@ export const getAllUsers = catchAsyncError(async (req: Request, res: Response, n
     res.status(200).json({
       success: true,
       users: JSON.parse(cacheExist)
+    })
+  } catch (error: any) {
+    return next(new ErrorHandler(error.message, 500))
+  }
+})
+export const updateUserRole = catchAsyncError(async (req: Request, res: Response, next: NextFunction) => {
+  try {
+    const { id, role } = req.body
+    if (req.user?.id === id) {
+      return next(new ErrorHandler("Can't change your own role", 500))
+    }
+    updateUserRoleService(res, id, role)
+  } catch (error: any) {
+    return next(new ErrorHandler(error.name, 500))
+  }
+})
+
+export const deleteUser = catchAsyncError(async (req: Request, res: Response, next: NextFunction) => {
+  try {
+    const { id } = req.params
+    if (!id) {
+      return next(new ErrorHandler("Please provide user's id", 400))
+    }
+    const user = await User.findById(id)
+    if (!user) {
+      return next(new ErrorHandler("User not found", 400))
+    }
+    await user?.deleteOne({ id })
+    await redisClient?.del(id)
+    res.status(200).json({
+      success: true,
+      message: "User deleted successfully"
     })
   } catch (error: any) {
     return next(new ErrorHandler(error.message, 500))

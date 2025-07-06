@@ -322,3 +322,22 @@ export const addReplyToReview = catchAsyncError(async (req: Request, res: Respon
     return next(new ErrorHandler(error.message, 500))
   }
 })
+export const deleteCourse = catchAsyncError(async (req: Request, res: Response, next: NextFunction) => {
+  try {
+    const { id } = req.params
+    if (!id) {
+      return next(new ErrorHandler("Please provide course id", 400))
+    }
+    const course = await Course.findById(id)
+    if (!course) {
+      return next(new ErrorHandler("Course not found", 400))
+    }
+    await course?.deleteOne({ id })
+    res.status(200).json({
+      success: true,
+      message: "Course deleted successfully"
+    })
+  } catch (error: any) {
+    return next(new ErrorHandler(error.message, 500))
+  }
+})

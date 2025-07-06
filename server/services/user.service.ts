@@ -14,3 +14,10 @@ export const getAllUsersService = async (res: Response) => {
   redisClient?.set("allUsers", JSON.stringify(users))
   res.status(200).json({ users, success: true });
 };
+export const updateUserRoleService = async (res: Response, id: string, role: string) => {
+  const user = await User.findByIdAndUpdate(id, { role }, { new: true })
+  res.status(201).json({
+    succes: true,
+    user
+  })
+}
