@@ -7,7 +7,7 @@ import {
   ACCESS_TOKEN_SECRET,
   ACTIVATION_SECRET,
   REFRESH_TOKEN_SECRET,
-} from "../config/config";
+} from "../config/env.config";
 import jwt, { JwtPayload, Secret } from "jsonwebtoken";
 import ejs from "ejs";
 import path from "path";

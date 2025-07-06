@@ -3,7 +3,7 @@ import dotenv from "dotenv";
 import cookieParser from "cookie-parser";
 dotenv.config();
 import cors from "cors";
-import { ORIGIN } from "./config/config";
+import { ORIGIN } from "./config/env.config";
 import { errorMiddleware } from "./middleware/error";
 import indexRoute from "./routes/index.routes";
 import fileUpload from "express-fileupload";

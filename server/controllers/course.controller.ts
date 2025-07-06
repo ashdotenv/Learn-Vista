@@ -6,7 +6,7 @@ import { cloudinary } from "../config/cloundinary.config";
 import { createCourse } from "../services/course.service";
 import { Course } from "../models/course.model";
 import { redisClient } from "../utils/redis";
-import mongoose from "mongoose";
+import mongoose, { Mongoose } from "mongoose";
 import ejs from "ejs"
 import path from "path";
 import { sendEmail } from "../utils/sendEmail";
@@ -245,7 +245,6 @@ export const addReview = catchAsyncError(async (req: Request, res: Response, nex
   try {
     const courseList = req.user?.courses
     const courseId = req.params.id
-    // check if user is enrolled in the course
     const courseExist = courseList?.some((course: any) => course._id.toString() === courseId.toString)
     if (!courseExist) {
       return next(new ErrorHandler("You are not enrolled in this course", 401))
@@ -275,6 +274,42 @@ export const addReview = catchAsyncError(async (req: Request, res: Response, nex
     })
 
 
+  } catch (error: any) {
+    return next(new ErrorHandler(error.message, 500))
+  }
+})
+interface ICommentInReviewData {
+  comment: string
+  courseId: string
+  reviewId: string
+}
+
+export const addReplyToReview = catchAsyncError(async (req: Request, res: Response, next: NextFunction) => {
+  try {
+    const { comment, courseId, reviewId } = req.body as ICommentInReviewData
+    const course = await Course.findById(courseId)
+    if (!course) return next(new ErrorHandler("Course not found", 404))
+
+    const review = course.reviews.find((rev: any) => rev._id.toString() === reviewId)
+    if (!review) return next(new ErrorHandler("Review not found", 404))
+
+    const replyData = {
+      user: req.user,
+      comment
+    }
+    if (!Array.isArray(review.commentReplies)) {
+      review.commentReplies = [{}]
+    }
+
+    review.commentReplies.push(replyData)
+    review.markModified("commentReplies")
+
+    await course.save()
+
+    res.status(200).json({
+      success: true,
+      course
+    })
   } catch (error: any) {
     return next(new ErrorHandler(error.message, 500))
   }

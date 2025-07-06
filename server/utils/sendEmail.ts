@@ -1,7 +1,7 @@
 import ejs from "ejs";
 import path from "path";
 import nodemailer, { Transporter } from "nodemailer";
-import { SMTP_HOST, SMTP_PASS, SMTP_PORT, SMTP_USER } from "../config/config";
+import { SMTP_HOST, SMTP_PASS, SMTP_PORT, SMTP_USER } from "../config/env.config";
 
 interface EmailOptions {
   email: string;

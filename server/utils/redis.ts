@@ -1,5 +1,5 @@
 import Redis from "ioredis";
-import { REDIS_URI } from "../config/config";
+import { REDIS_URI } from "../config/env.config";
 
 if (!REDIS_URI) {
   throw new Error("REDIS_URI is not defined in the environment");

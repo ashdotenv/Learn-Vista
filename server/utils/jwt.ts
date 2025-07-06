@@ -5,7 +5,7 @@ import {
   REFRESH_TOKEN_EXPIRES,
   ACCESS_TOKEN_SECRET,
   REFRESH_TOKEN_SECRET,
-} from "../config/config";
+} from "../config/env.config";
 import { redisClient } from "./redis";
 import { IUser } from "../models/user.model";
 

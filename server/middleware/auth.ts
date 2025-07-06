@@ -3,7 +3,7 @@ import jwt, { JwtPayload } from "jsonwebtoken";
 import { catchAsyncError } from "./catchAsyncError";
 import { redisClient } from "../utils/redis";
 import { ErrorHandler } from "../utils/ErrorHandler";
-import { ACCESS_TOKEN_SECRET } from "../config/config";
+import { ACCESS_TOKEN_SECRET } from "../config/env.config";
 
 export const isAuthenticated = catchAsyncError(
   async (req: Request, res: Response, next: NextFunction) => {
