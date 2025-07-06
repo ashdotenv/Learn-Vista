@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <title>Order Confirmation</title>
+    <style>
+      body {
+        font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+        margin: 0;
+        padding: 0;
+        background-color: #f5f7fa;
+        color: #333;
+      }
+      .container {
+        max-width: 600px;
+        margin: 40px auto;
+        background: #ffffff;
+        padding: 30px 40px;
+        border-radius: 12px;
+        box-shadow: 0 8px 24px rgba(0, 0, 0, 0.08);
+      }
+      h1 {
+        font-size: 24px;
+        color: #1a1a1a;
+        margin-bottom: 10px;
+      }
+      p {
+        font-size: 16px;
+        line-height: 1.6;
+        margin-bottom: 20px;
+      }
+      .order-summary {
+        background-color: #f0f4f8;
+        border-radius: 8px;
+        padding: 20px;
+      }
+      .order-summary h2 {
+        font-size: 18px;
+        margin-bottom: 10px;
+        color: #333;
+      }
+      .order-item {
+        display: flex;
+        justify-content: space-between;
+        padding: 8px 0;
+        border-bottom: 1px solid #e0e0e0;
+      }
+      .order-item:last-child {
+        border-bottom: none;
+      }
+      .footer {
+        margin-top: 30px;
+        font-size: 14px;
+        color: #888;
+        text-align: center;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <h1>Order Confirmation</h1>
+      <p>Thank you for your purchase! Below are the details of your order:</p>
+
+      <div class="order-summary">
+        <h2>Order Summary</h2>
+        <div class="order-item">
+          <span><strong>Course Name:</strong></span>
+          <span>Fullstack Web Development - MERN Stack</span>
+        </div>
+        <div class="order-item">
+          <span><strong>Order ID:</strong></span>
+          <span>6864c2fb09ae62856a0b1e4f</span>
+        </div>
+        <div class="order-item">
+          <span><strong>Price:</strong></span>
+          <span>$69.67</span>
+        </div>
+        <div class="order-item">
+          <span><strong>Date:</strong></span>
+          <span>July 6, 2025</span>
+        </div>
+      </div>
+
+      <p>
+        If you have any questions or concerns, feel free to reach out to our
+        support team.
+      </p>
+
+      <div class="footer">&copy; 2025 Learn Vista LMS. All rights reserved.</div>
+    </div>
+  </body>
+</html>
