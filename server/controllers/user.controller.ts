@@ -5,9 +5,7 @@ import { ErrorHandler } from "../utils/ErrorHandler";
 import { sendToken } from "../utils/jwt";
 import { redisClient } from "../utils/redis";
 import { getAllUsersService, getUserById, updateUserRoleService } from "../services/user.service";
-import { log } from "node:console";
 import { cloudinary } from "../config/cloundinary.config";
-import { json } from "node:stream/consumers";
 import fileUpload from "express-fileupload";
 
 export const getUserInfo = catchAsyncError(

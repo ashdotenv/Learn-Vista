@@ -98,7 +98,7 @@ export const getCourseById = catchAsyncError(
       const course = await Course.findById(id).select(
         "-courseData.videoUrl -courseData.suggestion -courseData.questions -courseData.Links"
       );
-      await redisClient?.set(course?._id as string, JSON.stringify(course));
+      await redisClient?.set(course?._id as string, JSON.stringify(course), "EX", 60477);
       if (!course) {
         return next(new ErrorHandler("Couldn't find Course", 400));
       }
