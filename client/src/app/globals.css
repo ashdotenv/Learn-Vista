@@ -1,5 +1,5 @@
 @import "tailwindcss";
-
+@config "../../tailwind.config.ts";
 :root {
   --background: #ffffff;
   --foreground: #171717;
@@ -18,12 +18,11 @@
     --foreground: #ededed;
   }
 }
-
 .hero_animation {
   background-image: linear-gradient(
     147.92deg,
-    rgba(239, 76%, 53%, 0.456) 10.41%,
-    rgba(0, 0%, 100%, 0) 89.25%
+    hsla(239, 76%, 53%, 0.456) 10.41%,
+    hsla(0, 0%, 100%, 0) 89.25%
   );
   animation: changeBackgroundColor 8s infinite alternate;
 }

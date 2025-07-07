@@ -2,7 +2,7 @@
 import React, { FC, useState } from 'react'
 import Heading from './utils/Heading'
 import Header from './components/Header'
-
+import Hero from './components/Route/Hero'
 interface Props {
 
 }
@@ -10,6 +10,7 @@ interface Props {
 const page: FC<Props> = () => {
   const [open, setOpen] = useState<boolean>(false)
   const [activeItems, setActiveItems] = useState<number>(0)
+  const [route, setRoute] = useState<string>("Login")
 
   return (
     <>
@@ -19,10 +20,13 @@ const page: FC<Props> = () => {
         keywords="Programming, Development, Design, Web, Learning, Coding, Students"
       />
       <Header
+        route={route}
+        setRoute={setRoute}
         open={open}
         setOpen={setOpen}
         activeItem={activeItems}
       />
+      <Hero />
     </>
   )
 }
