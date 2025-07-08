@@ -4,6 +4,10 @@ import NavItems from '../utils/NavItems'
 import Image from 'next/image'
 import ThemeSwitcher from '../utils/ThemeSwitcher'
 import { HiOutlineMenuAlt3, HiOutlineUserCircle } from 'react-icons/hi'
+import CustomModal from '../utils/CustomModal'
+import Login from './Auth/Login'
+import Signup from './Auth/Signup'
+import Verification from './Auth/Verification'
 
 interface Props {
     open: boolean
@@ -13,7 +17,7 @@ interface Props {
     setRoute: (route: string) => void
 }
 
-const Header: FC<Props> = ({ activeItem, setOpen, route, setRoute }) => {
+const Header: FC<Props> = ({ activeItem, setOpen, route, setRoute, open }) => {
     const [active, setActive] = useState(false)
     const [openSidebar, setOpenSidebar] = useState(false)
 
@@ -35,8 +39,8 @@ const Header: FC<Props> = ({ activeItem, setOpen, route, setRoute }) => {
                 <div className='w-[95%] 800px:w-[92%] m-auto py-2 h-full'>
                     <div className='w-full h-[80px] flex items-center justify-between p-3'>
                         <a href={"/"} className='text-[25px] font-poppins font-[500] text-black dark:text-white'>
-                            {/* <Image src={"/Logo.png"} alt='Learn-Vista-Logo' height={60} width={60} /> */}
-                            Learn-Vista
+                            <Image src={"/Logo.png"} alt='Learn-Vista-Logo' height={60} width={60} />
+                            {/* Learn-Vista */}
                         </a>
 
                         <div className='flex items-center gap-4'>
@@ -63,7 +67,6 @@ const Header: FC<Props> = ({ activeItem, setOpen, route, setRoute }) => {
                     </div>
                 </div>
             </nav>
-            {/* Mobile Sidebar */}
             {
                 openSidebar && (
                     <div
@@ -92,7 +95,57 @@ const Header: FC<Props> = ({ activeItem, setOpen, route, setRoute }) => {
                 )
             }
 
-
+            {
+                route === "Login" && (
+                    <>
+                        {
+                            open && (
+                                <CustomModal
+                                    open={open}
+                                    setopen={setOpen}
+                                    setRoute={setRoute}
+                                    activeItem={activeItem}
+                                    component={Login}
+                                />
+                            )
+                        }
+                    </>
+                )
+            }
+            {
+                route === "Sign-Up" && (
+                    <>
+                        {
+                            open && (
+                                <CustomModal
+                                    open={open}
+                                    setopen={setOpen}
+                                    setRoute={setRoute}
+                                    activeItem={activeItem}
+                                    component={Signup}
+                                />
+                            )
+                        }
+                    </>
+                )
+            }
+            {
+                route === "Verification" && (
+                    <>
+                        {
+                            open && (
+                                <CustomModal
+                                    open={open}
+                                    setopen={setOpen}
+                                    setRoute={setRoute}
+                                    activeItem={activeItem}
+                                    component={Verification}
+                                />
+                            )
+                        }
+                    </>
+                )
+            }
         </header>
     )
 }

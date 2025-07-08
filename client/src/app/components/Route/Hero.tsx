@@ -88,7 +88,8 @@ const Hero: FC<Props> = () => {
                         </Link>{" "}
                     </p>
                 </div>
-                <br />
+                <br /><br />
+
             </div>
         </div>
     );
