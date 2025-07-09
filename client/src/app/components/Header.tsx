@@ -94,7 +94,6 @@ const Header: FC<Props> = ({ activeItem, setOpen, route, setRoute, open }) => {
                     </div>
                 )
             }
-
             {
                 route === "Login" && (
                     <>

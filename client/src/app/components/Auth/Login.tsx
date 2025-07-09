@@ -106,7 +106,7 @@ const Login: FC<Props> = ({ setRoute }) => {
                     </h5>
                 </form>
             </div>
-            <br /> 
+            <br />
 
         </>
     )

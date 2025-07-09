@@ -24,7 +24,7 @@ export const sendEmail = async (options: EmailOptions): Promise<void> => {
   const templatePath = path.join(__dirname, "../mails", template);
   const html = await ejs.renderFile(templatePath, data);
   const mailOptions = {
-    from: `<${SMTP_USER}> from Learn Vista`,
+    from: `Learn Vista`,
     to: email,
     subject,
     html,
